@@ -6,6 +6,7 @@ USER root
 RUN mkdir -p /opt/bitnami/spark/custom-jars \
     && chown 1001:1001 /opt/bitnami/spark/custom-jars
 #(остальные драйверы и конекторы к другим базам данных можно добавить похожим образом нужно их только найти)
+ADD https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.9.8/clickhouse-jdbc-0.9.8-all-dependencies.jar /opt/bitnami/spark/custom-jars/
 ADD https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.10/postgresql-42.7.10.jar /opt/bitnami/spark/custom-jars/
 # Даем пользователю 1001 права на файлы
 RUN chown 1001:1001 /opt/bitnami/spark/custom-jars/*.jar
@@ -17,7 +18,7 @@ RUN pip install --no-cache-dir pyspark==3.5.3
 # Возвращаемся к небезопасному пользователю Bitnami
 USER 1001
 # Опционально: задаем переменную окружения для Spark JARs
-ENV SPARK_EXTRA_JARS=/opt/bitnami/spark/custom-jars/postgresql-42.7.10.jar
+ENV SPARK_EXTRA_JARS=/opt/bitnami/spark/custom-jars/postgresql-42.7.10.jar,/opt/bitnami/spark/custom-jars/clickhouse-jdbc-0.9.8-all-dependencies.jar
 # Добавляем Python в PATH
 ENV PATH=/opt/bitnami/python/.local/bin:$PATH
 # Запускаем JupyterLab
